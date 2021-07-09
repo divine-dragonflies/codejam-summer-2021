@@ -1,0 +1,7 @@
+# Linting dependencies
+black == 21.6b0
+flake8 == 3.9.2
+flake8-annotations
+flake8-bandit
+flake8-docstrings
+isort == 5.9.2

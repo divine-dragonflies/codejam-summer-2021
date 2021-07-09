@@ -5,32 +5,56 @@
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.5.0
+    rev: v4.0.1
     hooks:
+      - id: check-builtin-literals
+      - id: check-case-conflict
       - id: check-toml
       - id: check-yaml
+      - id: debug-statements
       - id: end-of-file-fixer
+      - id: forbid-new-submodules
       - id: trailing-whitespace
-        args: [--markdown-linebreak-ext=md]
+
   - repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.5.1
+    rev: v1.9.0
     hooks:
+      - id: python-no-log-warn
       - id: python-check-blanket-noqa
+      - id: python-no-eval
+
+  - repo: https://github.com/jazzband/pip-tools
+    rev: 6.2.0
+    hooks:
+      - id: pip-compile
+        files: ^requirements-.*\.(in|txt)$
+        args: [requirements-dev.in]
+      - id: pip-compile
+        files: ^requirements-lint\.(in|txt)$
+        args: [requirements-lint.in]
+      - id: pip-compile
+        files: ^requirements\.(in|txt)$
+        args: [requirements.in]
+
   - repo: local
     hooks:
-      - id: isort
-        name: ISort
-        entry: python -m isort .  # Default Env setup
-        # entry: pipenv run python -m isort .  # Pipenv setup
-        # entry: poetry run python -m isort .  # Poetry setup
+      - id: black
+        name: Format Python code
+        entry: python -m black .
         language: system
         types: [python]
         require_serial: true
+
+      - id: isort
+        name: Sort Imports
+        entry: python -m isort .
+        language: system
+        types: [python]
+        require_serial: true
+
       - id: flake8
-        name: Flake8
-        entry: python -m flake8  # Default Env setup
-        # entry: pipenv run python -m flake8  # Pipenv setup
-        # entry: poetry run python -m flake8  # Poetry setup
+        name: flake8
+        entry: python -m flake8
         language: system
         types: [python]
         require_serial: true

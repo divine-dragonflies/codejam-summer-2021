@@ -12,6 +12,10 @@ black==21.6b0
     # via -r requirements-lint.in
 click==8.0.1
     # via black
+colorama==0.4.4
+    # via
+    #   bandit
+    #   click
 flake8==3.9.2
     # via
     #   -r requirements-lint.in

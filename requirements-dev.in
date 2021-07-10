@@ -1,5 +1,4 @@
 # Development dependencies
 -r requirements.in
--r requirements-lint.in
 nox
 pre-commit

@@ -4,10 +4,14 @@
 #
 #    pip-compile requirements.in
 #
+ansicon==1.89.0
+    # via jinxed
 attrs==21.2.0
     # via -r requirements.in
 blessed==1.18.1
     # via -r requirements.in
+jinxed==1.1.0
+    # via blessed
 six==1.16.0
     # via blessed
 wcwidth==0.2.5

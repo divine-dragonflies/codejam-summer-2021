@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements-dev.in
 #
+ansicon==1.89.0
+    # via jinxed
 appdirs==1.4.4
     # via virtualenv
 argcomplete==1.12.3
@@ -14,6 +16,8 @@ blessed==1.18.1
     # via -r requirements.in
 cfgv==3.3.0
     # via pre-commit
+colorama==0.4.4
+    # via colorlog
 colorlog==5.0.1
     # via nox
 distlib==0.3.2
@@ -22,6 +26,8 @@ filelock==3.0.12
     # via virtualenv
 identify==2.2.10
     # via pre-commit
+jinxed==1.1.0
+    # via blessed
 nodeenv==1.6.0
     # via pre-commit
 nox==2021.6.12

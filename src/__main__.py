@@ -96,8 +96,9 @@ def key_mapping(key: str, _board: List):
 
 def rotate_board(_board):
     n = len(_board)
+    m = len(_board[1])
     new_board = []
-    for i in range(n):
+    for i in range(m):
         new_row = []
         for j in range(n - 1, -1, -1):
             new_row.append(_board[j][i])

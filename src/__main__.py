@@ -81,7 +81,7 @@ def collision(x=0, y=0) -> bool:
 
 
 def check_win(_board, x, y):
-    win_x, win_y = find_symbol(_board,"d")
+    win_x, win_y = find_symbol(_board, "d")
     if win_x == x and win_y == y:
         return True
     else:
@@ -90,7 +90,7 @@ def check_win(_board, x, y):
 
 def move(_board: List, direction: str):
     if direction != "btn_rotate":
-        player_x, player_y = find_symbol(_board,"p")
+        player_x, player_y = find_symbol(_board, "p")
         action = {
             "btn_left": (player_x, player_y - 1),
             "btn_right": (player_x, player_y + 1),
@@ -102,7 +102,7 @@ def move(_board: List, direction: str):
         if collision(player_new_x, player_new_y):
             _board[player_x][player_y] = "."
             _board[player_new_x][player_new_y] = "p"
-        if check_win(_board, player_new_x,player_new_y):
+        if check_win(_board, player_new_x, player_new_y):
             print("You win!")
     else:
         _board = rotate_board(_board)

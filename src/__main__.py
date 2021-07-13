@@ -65,6 +65,22 @@ def find_player(_board: List):
     return (player_index_x, player_index_y)
 
 
+def collision(x = 0, y = 0) -> bool:
+    
+    rows = len(board) - 1
+    columns = len(board[0]) -1
+    
+    if x == 0 or y == 0:
+        return False
+    elif x == rows or y == columns:
+        return False
+    elif board[x][y] == 'w':
+        return False
+    else:
+        return True
+
+
+
 def move(_board: List, direction: str):
     if direction != "btn_rotate":
         player_x, player_y = find_player(_board)
@@ -75,9 +91,10 @@ def move(_board: List, direction: str):
             "btn_down": (player_x + 1, player_y),
             "btn_rotate": (player_x, player_y),
         }
-        _board[player_x][player_y] = "."
         player_new_x, player_new_y = action[direction]
-        _board[player_new_x][player_new_y] = "p"
+        if collision(player_new_x, player_new_y):
+            _board[player_x][player_y] = "."
+            _board[player_new_x][player_new_y] = "p"
     else:
         _board = rotate_board(_board)
     return _board

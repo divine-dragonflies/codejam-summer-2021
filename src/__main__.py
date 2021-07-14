@@ -99,11 +99,11 @@ def move(_board: List, direction: str):
             "btn_rotate": (player_x, player_y),
         }
         player_new_x, player_new_y = action[direction]
+        if check_win(_board, player_new_x, player_new_y):
+            print("You win!")
         if collision(player_new_x, player_new_y):
             _board[player_x][player_y] = "."
             _board[player_new_x][player_new_y] = "p"
-        if check_win(_board, player_new_x, player_new_y):
-            print("You win!")
     else:
         _board = rotate_board(_board)
     return _board

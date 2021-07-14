@@ -55,19 +55,42 @@ def draw_board(board: List[List[str]]) -> None:
         print(accum)
 
 
-def find_player(_board: List):
+def find_symbol(_board: List, char):
     row_number = 0
     for row in _board:
-        if "p" in row:
+        if char in row:
             player_index_x = row_number
-            player_index_y = row.index("p")
+            player_index_y = row.index(char)
         row_number += 1
     return (player_index_x, player_index_y)
 
 
+def collision(x=0, y=0) -> bool:
+
+    rows = len(board) - 1
+    columns = len(board[0]) - 1
+
+    if x == 0 or y == 0:
+        return False
+    elif x == rows or y == columns:
+        return False
+    elif board[x][y] == "w":
+        return False
+    else:
+        return True
+
+
+def check_win(_board, x, y):
+    win_x, win_y = find_symbol(_board, "d")
+    if win_x == x and win_y == y:
+        return True
+    else:
+        return False
+
+
 def move(_board: List, direction: str):
     if direction != "btn_rotate":
-        player_x, player_y = find_player(_board)
+        player_x, player_y = find_symbol(_board, "p")
         action = {
             "btn_left": (player_x, player_y - 1),
             "btn_right": (player_x, player_y + 1),
@@ -75,9 +98,12 @@ def move(_board: List, direction: str):
             "btn_down": (player_x + 1, player_y),
             "btn_rotate": (player_x, player_y),
         }
-        _board[player_x][player_y] = "."
         player_new_x, player_new_y = action[direction]
-        _board[player_new_x][player_new_y] = "p"
+        if check_win(_board, player_new_x, player_new_y):
+            print("You win!")
+        if collision(player_new_x, player_new_y):
+            _board[player_x][player_y] = "."
+            _board[player_new_x][player_new_y] = "p"
     else:
         _board = rotate_board(_board)
     return _board

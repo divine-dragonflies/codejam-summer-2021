@@ -4,6 +4,8 @@ from typing import List
 
 from blessed import Terminal
 
+from functools import partial
+
 board = [
     ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
     ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
@@ -15,6 +17,8 @@ board = [
     ["w", "p", ".", ".", ".", ".", ".", ".", "w"],
     ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
 ]
+
+is_win = False
 
 term = Terminal()
 
@@ -89,6 +93,7 @@ def check_win(_board, x, y):
 
 
 def move(_board: List, direction: str):
+    is_win = False
     if direction != "btn_rotate":
         player_x, player_y = find_symbol(_board, "p")
         action = {
@@ -100,13 +105,14 @@ def move(_board: List, direction: str):
         }
         player_new_x, player_new_y = action[direction]
         if check_win(_board, player_new_x, player_new_y):
+            is_win = True
             print("You win!")
         if collision(player_new_x, player_new_y):
             _board[player_x][player_y] = "."
             _board[player_new_x][player_new_y] = "p"
     else:
         _board = rotate_board(_board)
-    return _board
+    return _board, is_win
 
 
 def key_mapping(key: str, _board: List):
@@ -131,16 +137,26 @@ def rotate_board(_board):
         new_board.append(new_row)
     return new_board
 
+echo = partial(print, end='', flush=True)
+echo(u'')
+
+def main(_board):
+    with term.fullscreen(), term.cbreak():
+            draw_board(_board)
+            val = term.inkey()
+            while val.code != term.KEY_ESCAPE:
+                val = term.inkey()
+                if val and str(val) in "wasdr":
+                    board, is_win = key_mapping(str(val), _board)
+                    draw_board(board)
+                if is_win:    
+                    echo(term.normal)
+                    score = 100
+                    echo(u''.join((term.move_yx(term.height - 1, 1), term.normal)))
+                    echo(u''.join((u'\r\n', u'You win. Your score: {}'.format(score), u'\r\n')))
+                    break
+
 
 if __name__ == "__main__":
-    with term.fullscreen(), term.cbreak():
-        draw_board(board)
-        val = term.inkey()
-        # It will be working until ESCAPE pressed
-        while val.code != term.KEY_ESCAPE:
-            val = term.inkey()
-            if val and str(val) in "wasdr":
-                board = key_mapping(str(val), board)
-                draw_board(board)
-            else:
-                pass
+    main(board)
+            

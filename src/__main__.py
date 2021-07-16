@@ -1,5 +1,6 @@
 """The entry point to this game."""
 
+from time import sleep
 from typing import List
 
 from blessed import Terminal
@@ -23,6 +24,10 @@ COLORWALL = term.chartreuse4_on_chartreuse4
 COLOREND = term.yellow_on_yellow
 COLORAIR = term.white_on_white
 COLORTERMINAL = term.white_on_white
+
+
+class WinRound(BaseException):
+    pass
 
 
 def draw_board(board: List[List[str]]) -> None:
@@ -100,7 +105,7 @@ def move(_board: List, direction: str):
         }
         player_new_x, player_new_y = action[direction]
         if check_win(_board, player_new_x, player_new_y):
-            print("You win!")
+            raise WinRound
         if collision(player_new_x, player_new_y):
             _board[player_x][player_y] = "."
             _board[player_new_x][player_new_y] = "p"
@@ -140,7 +145,12 @@ if __name__ == "__main__":
         while val.code != term.KEY_ESCAPE:
             val = term.inkey()
             if val and str(val) in "wasdr":
-                board = key_mapping(str(val), board)
-                draw_board(board)
+                try:
+                    board = key_mapping(str(val), board)
+                    draw_board(board)
+                except WinRound:
+                    print("You Win")
+                    sleep(5)
+                    break
             else:
                 pass

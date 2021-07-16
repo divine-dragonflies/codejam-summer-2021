@@ -1,17 +1,18 @@
 """The entry point to this game."""
 
+from time import sleep
 from typing import List
 
 from blessed import Terminal
 
 board = [
     ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", "d", "w"],
+    ["w", ".", ".", ".", ".", "w", ".", ".", "w"],
+    ["w", ".", "w", "w", ".", "w", ".", "d", "w"],
     ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
     ["w", "w", "w", "w", ".", "w", "w", "w", "w"],
     ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+    ["w", "w", "w", "w", "w", "w", "w", ".", "w"],
     ["w", "p", ".", ".", ".", ".", ".", ".", "w"],
     ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
 ]
@@ -23,6 +24,10 @@ COLORWALL = term.chartreuse4_on_chartreuse4
 COLOREND = term.yellow_on_yellow
 COLORAIR = term.white_on_white
 COLORTERMINAL = term.white_on_white
+
+
+class WinRound(BaseException):
+    pass
 
 
 def draw_board(board: List[List[str]]) -> None:
@@ -65,16 +70,16 @@ def find_symbol(_board: List, char):
     return (player_index_x, player_index_y)
 
 
-def collision(x=0, y=0) -> bool:
+def collision(_board, x=0, y=0) -> bool:
 
-    rows = len(board) - 1
-    columns = len(board[0]) - 1
+    rows = len(_board) - 1
+    columns = len(_board[0]) - 1
 
     if x == 0 or y == 0:
         return False
     elif x == rows or y == columns:
         return False
-    elif board[x][y] == "w":
+    elif _board[x][y] == "w":
         return False
     else:
         return True
@@ -100,12 +105,23 @@ def move(_board: List, direction: str):
         }
         player_new_x, player_new_y = action[direction]
         if check_win(_board, player_new_x, player_new_y):
-            print("You win!")
-        if collision(player_new_x, player_new_y):
+            raise WinRound
+        if collision(_board, player_new_x, player_new_y):
             _board[player_x][player_y] = "."
             _board[player_new_x][player_new_y] = "p"
     else:
         _board = rotate_board(_board)
+    return _board
+
+
+def gravity(_board: List):
+    player_x, player_y = find_symbol(_board, "p")
+    while collision(_board, player_x + 1, player_y):
+        if check_win(_board, player_x + 1, player_y):
+            raise WinRound
+        _board[player_x][player_y] = "."
+        player_x += 1
+        _board[player_x][player_y] = "p"
     return _board
 
 
@@ -117,7 +133,8 @@ def key_mapping(key: str, _board: List):
         "s": "btn_down",
         "r": "btn_rotate",
     }
-    return move(_board, action[key])
+    _board = move(_board, action[key])
+    return gravity(_board)
 
 
 def rotate_board(_board):
@@ -140,7 +157,12 @@ if __name__ == "__main__":
         while val.code != term.KEY_ESCAPE:
             val = term.inkey()
             if val and str(val) in "wasdr":
-                board = key_mapping(str(val), board)
-                draw_board(board)
+                try:
+                    board = key_mapping(str(val), board)
+                    draw_board(board)
+                except WinRound:
+                    print(term.green_on_black + "You Win")
+                    sleep(5)
+                    break
             else:
                 pass

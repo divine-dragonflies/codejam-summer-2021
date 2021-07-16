@@ -7,12 +7,12 @@ from blessed import Terminal
 
 board = [
     ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", "d", "w"],
+    ["w", ".", ".", ".", ".", "w", ".", ".", "w"],
+    ["w", ".", "w", "w", ".", "w", ".", "d", "w"],
     ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
     ["w", "w", "w", "w", ".", "w", "w", "w", "w"],
     ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+    ["w", "w", "w", "w", "w", "w", "w", ".", "w"],
     ["w", "p", ".", ".", ".", ".", ".", ".", "w"],
     ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
 ]
@@ -117,6 +117,8 @@ def move(_board: List, direction: str):
 def gravity(_board: List):
     player_x, player_y = find_symbol(_board, "p")
     while collision(_board, player_x + 1, player_y):
+        if check_win(_board, player_x + 1, player_y):
+            raise WinRound
         _board[player_x][player_y] = "."
         player_x += 1
         _board[player_x][player_y] = "p"

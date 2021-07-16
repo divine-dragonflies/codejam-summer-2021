@@ -159,7 +159,7 @@ if __name__ == "__main__":
                     board = key_mapping(str(val), board)
                     draw_board(board)
                 except WinRound:
-                    print("You Win")
+                    print(term.green_on_black + "You Win")
                     sleep(5)
                     break
             else:

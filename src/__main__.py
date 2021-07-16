@@ -1,11 +1,9 @@
 """The entry point to this game."""
 
 from time import sleep
-from typing import List
+from typing import Any, List, Tuple, TypeVar, Iterator, Optional
 
 from blessed import Terminal
-
-from functools import partial
 
 board = [
     ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
@@ -18,8 +16,6 @@ board = [
     ["w", "p", ".", ".", ".", ".", ".", ".", "w"],
     ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
 ]
-
-is_win = False
 
 term = Terminal()
 
@@ -37,7 +33,6 @@ class WinRound(BaseException):
 def draw_board(board: List[List[str]]) -> None:
     """
     Draws the game board.
-
     :param board: 2D list of strings that represent the game state.
     """
     print(term.home + COLORTERMINAL + term.clear)
@@ -98,7 +93,6 @@ def check_win(_board, x, y):
 
 
 def move(_board: List, direction: str):
-    is_win = False
     if direction != "btn_rotate":
         player_x, player_y = find_symbol(_board, "p")
         action = {
@@ -115,8 +109,8 @@ def move(_board: List, direction: str):
             _board[player_x][player_y] = "."
             _board[player_new_x][player_new_y] = "p"
     else:
-        _board = rotate_board(_board)
-    return _board, is_win
+        _board = rotate_board(_board, 0)
+    return _board
 
 
 def gravity(_board: List):
@@ -134,51 +128,41 @@ def key_mapping(key: str, _board: List):
     action = {
         "a": "btn_left",
         "d": "btn_right",
-        "w": "btn_up",
-        "s": "btn_down",
-        "r": "btn_rotate",
+        "w": "btn_rotate",
+        "s": "btn_rotate",
     }
     _board = move(_board, action[key])
     return gravity(_board)
 
 
-def rotate_board(_board):
+def rotate_board(_board, direction):
     n = len(_board)
     m = len(_board[1])
     new_board = []
-    for i in range(m):
-        new_row = []
-        for j in range(n - 1, -1, -1):
-            new_row.append(_board[j][i])
-        new_board.append(new_row)
+    if direction == 0:
+        for i in range(m):
+            new_row = []
+            for j in range(n - 1, -1, -1):
+                new_row.append(_board[j][i])
+            new_board.append(new_row)
+    else: 
+        for i in range(n - 1, -1, -1):
+            new_row = []
+            for j in range(m):
+                new_row.append(_board[j][i])
+            new_board.append(new_row)
+
     return new_board
-
-echo = partial(print, end='', flush=True)
-echo(u'')
-
-def main(_board):
-    with term.fullscreen(), term.cbreak():
-            draw_board(_board)
-            val = term.inkey()
-<<<<<<< HEAD
-            while val.code != term.KEY_ESCAPE:
-                val = term.inkey()
-                if val and str(val) in "wasdr":
-                    board, is_win = key_mapping(str(val), _board)
-                    draw_board(board)
-                if is_win:    
-                    echo(term.normal)
-                    score = 100
-                    echo(u''.join((term.move_yx(term.height - 1, 1), term.normal)))
-                    echo(u''.join((u'\r\n', u'You win. Your score: {}'.format(score), u'\r\n')))
-                    break
 
 
 if __name__ == "__main__":
-    main(board)
-            
-=======
-            if val and str(val) in "wasdr":
+    with term.fullscreen(), term.cbreak():
+        draw_board(board)
+        val = term.inkey()
+        # It will be working until ESCAPE pressed
+        while val.code != term.KEY_ESCAPE:
+            val = term.inkey()
+            if val and str(val) in "wasd":
                 try:
                     board = key_mapping(str(val), board)
                     draw_board(board)
@@ -188,4 +172,3 @@ if __name__ == "__main__":
                     break
             else:
                 pass
->>>>>>> ceff20fe83bc22b9281459070c042d2e09de8be8

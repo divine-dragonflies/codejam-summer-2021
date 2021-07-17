@@ -105,27 +105,24 @@ def check_win(_board, x, y):
 
 def move(_board: List, direction: str) -> List:
     player_x, player_y = find_symbol(_board, "p")
-    action = {
-        "btn_left": (player_x, player_y - 1),
-        "btn_right": (player_x, player_y + 1),
-        "btn_up": (player_x, player_y),
-        "btn_down": (player_x, player_y),
-    }
-    player_new_x, player_new_y = action[direction]
-    rotate_action = {
-        "btn_left": rotate_board(_board, 0),
-        "btn_right": rotate_board(_board, 0),
-        "btn_up": rotate_board(_board, 1),
-        "btn_down": rotate_board(_board, 2),
-    }
-    _board = rotate_action[direction]
-    if player_x == player_new_x and player_y == player_new_y:
-        player_new_x, player_new_y = find_symbol(_board, "p")
-    if check_win(_board, player_new_x, player_new_y):
+    if direction in ("btn_left","btn_right"):
+        action = {
+            "btn_left": (player_x, player_y - 1),
+            "btn_right": (player_x, player_y + 1)
+        }
+        player_new_x, player_new_y = action[direction]
+        if collision(_board, player_new_x, player_new_y):
+            _board[player_x][player_y] = "."
+            _board[player_new_x][player_new_y] = "p"
+    else:
+        rotate_action = {
+            "btn_up": rotate_board(_board, 1),
+            "btn_down": rotate_board(_board, 2),
+        }
+        _board = rotate_action[direction]
+    player_x, player_y = find_symbol(_board, "p")
+    if check_win(_board, player_x, player_y):
         raise WinRound
-    if collision(_board, player_new_x, player_new_y):
-        _board[player_x][player_y] = "."
-        _board[player_new_x][player_new_y] = "p"
     return _board
 
 

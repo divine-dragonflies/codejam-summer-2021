@@ -1,7 +1,7 @@
 """The entry point to this game."""
 
 from time import sleep
-from typing import Any, List, Tuple, TypeVar, Iterator, Optional
+from typing import List
 
 from blessed import Terminal
 
@@ -92,24 +92,29 @@ def check_win(_board, x, y):
         return False
 
 
-def move(_board: List, direction: str):
-    if direction != "btn_rotate":
-        player_x, player_y = find_symbol(_board, "p")
-        action = {
-            "btn_left": (player_x, player_y - 1),
-            "btn_right": (player_x, player_y + 1),
-            "btn_up": (player_x - 1, player_y),
-            "btn_down": (player_x + 1, player_y),
-            "btn_rotate": (player_x, player_y),
-        }
-        player_new_x, player_new_y = action[direction]
-        if check_win(_board, player_new_x, player_new_y):
-            raise WinRound
-        if collision(_board, player_new_x, player_new_y):
-            _board[player_x][player_y] = "."
-            _board[player_new_x][player_new_y] = "p"
-    else:
-        _board = rotate_board(_board, 0)
+def move(_board: List, direction: str) -> List:
+    player_x, player_y = find_symbol(_board, "p")
+    action = {
+        "btn_left": (player_x, player_y - 1),
+        "btn_right": (player_x, player_y + 1),
+        "btn_up": (player_x, player_y),
+        "btn_down": (player_x, player_y),
+    }
+    player_new_x, player_new_y = action[direction]
+    rotate_action = {
+        "btn_left": rotate_board(_board, 0),
+        "btn_right": rotate_board(_board, 0),
+        "btn_up": rotate_board(_board, 1),
+        "btn_down": rotate_board(_board, 2),
+    }
+    _board = rotate_action[direction]
+    if player_x == player_new_x and player_y == player_new_y:
+        player_new_x, player_new_y = find_symbol(_board, "p")
+    if check_win(_board, player_new_x, player_new_y):
+        raise WinRound
+    if collision(_board, player_new_x, player_new_y):
+        _board[player_x][player_y] = "."
+        _board[player_new_x][player_new_y] = "p"
     return _board
 
 
@@ -128,24 +133,26 @@ def key_mapping(key: str, _board: List):
     action = {
         "a": "btn_left",
         "d": "btn_right",
-        "w": "btn_rotate",
-        "s": "btn_rotate",
+        "w": "btn_up",
+        "s": "btn_down",
     }
     _board = move(_board, action[key])
     return gravity(_board)
 
 
-def rotate_board(_board, direction):
+def rotate_board(_board, rotate_direction):
     n = len(_board)
     m = len(_board[1])
     new_board = []
-    if direction == 0:
+    if rotate_direction == 0:
+        return _board
+    if rotate_direction == 1:
         for i in range(m):
             new_row = []
             for j in range(n - 1, -1, -1):
                 new_row.append(_board[j][i])
             new_board.append(new_row)
-    else: 
+    if rotate_direction == 2:
         for i in range(n - 1, -1, -1):
             new_row = []
             for j in range(m):

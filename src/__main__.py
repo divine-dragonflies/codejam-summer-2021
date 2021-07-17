@@ -5,17 +5,28 @@ from typing import List
 
 from blessed import Terminal
 
-board = [
+board = [[
+    ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
+    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+    ["w", ".", ".", ".", ".", ".", ".", "d", "w"],
+    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+    ["w", "w", "w", "w", ".", "w", "w", "w", "w"],
+    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+    ["w", "p", ".", ".", ".", ".", ".", ".", "w"],
+    ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
+],
+[
     ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
     ["w", ".", ".", ".", ".", "w", ".", ".", "w"],
     ["w", ".", "w", "w", ".", "w", ".", "d", "w"],
     ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
     ["w", "w", "w", "w", ".", "w", "w", "w", "w"],
     ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", "w", "w", "w", "w", "w", "w", ".", "w"],
+    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
     ["w", "p", ".", ".", ".", ".", ".", ".", "w"],
     ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
-]
+]]
 
 term = Terminal()
 
@@ -30,13 +41,13 @@ class WinRound(BaseException):
     pass
 
 
-def draw_board(board: List[List[str]]) -> None:
+def draw_board(_board: List[List[str]]) -> None:
     """
     Draws the game board.
-    :param board: 2D list of strings that represent the game state.
+    :param _board: 2D list of strings that represent the game state.
     """
     print(term.home + COLORTERMINAL + term.clear)
-    for line in board:
+    for line in _board:
         currentcolor = None
         accum = ""
 
@@ -164,18 +175,23 @@ def rotate_board(_board, rotate_direction):
 
 if __name__ == "__main__":
     with term.fullscreen(), term.cbreak():
-        draw_board(board)
+        boardcount = 0
+        draw_board(board[boardcount])
         val = term.inkey()
         # It will be working until ESCAPE pressed
         while val.code != term.KEY_ESCAPE:
             val = term.inkey()
             if val and str(val) in "wasd":
                 try:
-                    board = key_mapping(str(val), board)
-                    draw_board(board)
+                    board[boardcount] = key_mapping(str(val), board[boardcount])
+                    draw_board(board[boardcount])
                 except WinRound:
-                    print(term.green_on_black + "You Win")
-                    sleep(5)
-                    break
+                    boardcount += 1
+                    if boardcount > len(board)-1:
+                        print(term.green_on_black + "You Win")
+                        sleep(5)
+                        break
+                    else:
+                        draw_board(board[boardcount])
             else:
                 pass

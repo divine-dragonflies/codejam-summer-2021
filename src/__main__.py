@@ -5,28 +5,30 @@ from typing import List
 
 from blessed import Terminal
 
-board = [[
-    ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", "d", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", "w", "w", "w", ".", "w", "w", "w", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", "p", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
-],
-[
-    ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
-    ["w", ".", ".", ".", ".", "w", ".", ".", "w"],
-    ["w", ".", "w", "w", ".", "w", ".", "d", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", "w", "w", "w", ".", "w", "w", "w", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", "p", ".", ".", ".", ".", ".", ".", "w"],
-    ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
-]]
+board = [
+    [
+        ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
+        ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+        ["w", ".", ".", ".", ".", ".", ".", "d", "w"],
+        ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+        ["w", "w", "w", "w", ".", "w", "w", "w", "w"],
+        ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+        ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+        ["w", "p", ".", ".", ".", ".", ".", ".", "w"],
+        ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
+    ],
+    [
+        ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
+        ["w", ".", ".", ".", ".", "w", ".", ".", "w"],
+        ["w", ".", "w", "w", ".", "w", ".", "d", "w"],
+        ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+        ["w", "w", "w", "w", ".", "w", "w", "w", "w"],
+        ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+        ["w", ".", ".", ".", ".", ".", ".", ".", "w"],
+        ["w", "p", ".", ".", ".", ".", ".", ".", "w"],
+        ["w", "w", "w", "w", "w", "w", "w", "w", "w"],
+    ],
+]
 
 term = Terminal()
 
@@ -105,10 +107,10 @@ def check_win(_board, x, y):
 
 def move(_board: List, direction: str) -> List:
     player_x, player_y = find_symbol(_board, "p")
-    if direction in ("btn_left","btn_right"):
+    if direction in ("btn_left", "btn_right"):
         action = {
             "btn_left": (player_x, player_y - 1),
-            "btn_right": (player_x, player_y + 1)
+            "btn_right": (player_x, player_y + 1),
         }
         player_new_x, player_new_y = action[direction]
         if collision(_board, player_new_x, player_new_y):
@@ -184,7 +186,7 @@ if __name__ == "__main__":
                     draw_board(board[boardcount])
                 except WinRound:
                     boardcount += 1
-                    if boardcount > len(board)-1:
+                    if boardcount > len(board) - 1:
                         print(term.green_on_black + "You Win")
                         sleep(5)
                         break
